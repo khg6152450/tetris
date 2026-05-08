@@ -1,0 +1,230 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+
+:root {
+    --bg-color: #0a0a0f;
+    --panel-bg: rgba(255, 255, 255, 0.05);
+    --panel-border: rgba(255, 255, 255, 0.1);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --accent: #7c4dff;
+    
+    /* Tetromino Colors */
+    --color-i: #00f0f0;
+    --color-j: #0000f0;
+    --color-l: #f0a000;
+    --color-o: #f0f000;
+    --color-s: #00f000;
+    --color-t: #a000f0;
+    --color-z: #f00000;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background: radial-gradient(circle at top right, #1a1a2e, #0a0a0f);
+    color: var(--text-primary);
+    height: 100vh;
+    height: 100svh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    touch-action: none;
+    padding: 10px;
+}
+
+#app {
+    display: grid;
+    grid-template-columns: auto 200px;
+    gap: 20px;
+    width: 100%;
+    max-width: 900px;
+    height: 100%;
+    max-height: 90vh;
+}
+
+@media (max-width: 600px) {
+    #app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+        gap: 8px;
+        max-height: 100%;
+    }
+}
+
+.game-container {
+    position: relative;
+    border: 2px solid var(--panel-border);
+    background: var(--panel-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+canvas {
+    display: block;
+    background: rgba(0, 0, 0, 0.2);
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.side-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+@media (max-width: 600px) {
+    .side-panel {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1.5fr;
+        gap: 8px;
+        order: -1; /* Move to top */
+    }
+}
+
+.stat-box {
+    background: var(--panel-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--panel-border);
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.stat-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.next-box {
+    padding: 5px;
+}
+
+canvas#next-canvas {
+    background: transparent;
+    width: 60px;
+    height: 60px;
+}
+
+@media (max-width: 600px) {
+    canvas#next-canvas {
+        width: 40px;
+        height: 40px;
+    }
+    .stat-value { font-size: 1rem; }
+}
+
+/* Mobile Controls - Optimized Pad Style */
+.mobile-controls {
+    display: none;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto auto;
+    gap: 8px;
+    width: 100%;
+}
+
+@media (max-width: 600px) {
+    .mobile-controls {
+        display: grid;
+    }
+}
+
+.btn {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    color: white;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+    transition: all 0.1s;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn:active {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(0.95);
+}
+
+.btn-large {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.btn-highlight {
+    background: rgba(124, 77, 255, 0.2);
+    border-color: var(--accent);
+}
+
+/* Overlay screens */
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.overlay h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    background: linear-gradient(to right, #fff, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.play-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(124, 77, 255, 0.4);
+    transition: transform 0.2s;
+}
+
+.play-btn:hover {
+    transform: scale(1.05);
+}

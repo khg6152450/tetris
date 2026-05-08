@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Premium Tetris</title>
+    <meta name="description" content="광고 없이 즐기는 프리미엄 테트리스 게임입니다.">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a0a0f">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="game-container">
+            <canvas id="game-canvas"></canvas>
+
+            <div id="start-screen" class="overlay active">
+                <h2>TETRIS</h2>
+                <button class="play-btn" onclick="startGame()">게임 시작</button>
+            </div>
+
+            <div id="game-over-screen" class="overlay">
+                <h2>GAME OVER</h2>
+                <div class="stat-box" style="margin-bottom: 20px;">
+                    <div class="stat-label">최종 점수</div>
+                    <div id="final-score" class="stat-value">0</div>
+                </div>
+                <button class="play-btn" onclick="startGame()">다시 시작</button>
+            </div>
+        </div>
+
+        <div class="side-panel">
+            <div class="stat-box next-box">
+                <div class="stat-label">다음 블록</div>
+                <canvas id="next-canvas" width="80" height="80"></canvas>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-label">점수</div>
+                <div id="score" class="stat-value">0</div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-label">레벨</div>
+                <div id="level" class="stat-value">1</div>
+            </div>
+
+        </div>
+
+        <div class="mobile-controls">
+            <button class="btn" id="ctrl-left">←</button>
+            <button class="btn btn-highlight" id="ctrl-rotate">회전 ↻</button>
+            <button class="btn" id="ctrl-right">→</button>
+            <button class="btn btn-large" id="ctrl-down">↓ 천천히 내리기</button>
+            <button class="btn btn-large btn-highlight" id="ctrl-drop">Space (바로 내리기)</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+    <script src="ui.js"></script>
+    <script>
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => {
+                        console.log('SW registered');
+                        // Update found
+                        reg.onupdatefound = () => {
+                            const installingWorker = reg.installing;
+                            installingWorker.onstatechange = () => {
+                                if (installingWorker.state === 'installed') {
+                                    if (navigator.serviceWorker.controller) {
+                                        console.log('New content available; please refresh.');
+                                        window.location.reload();
+                                    }
+                                }
+                            };
+                        };
+                    })
+                    .catch(err => console.log('SW failed', err));
+            });
+        }
+    </script>
+</body>
+
+</html>
