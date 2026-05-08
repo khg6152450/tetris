@@ -75,15 +75,58 @@ window.addEventListener('keydown', event => {
     }
 });
 
-// Mobile Controls
-document.getElementById('ctrl-left').addEventListener('pointerdown', () => game?.move(-1));
-document.getElementById('ctrl-right').addEventListener('pointerdown', () => game?.move(1));
-document.getElementById('ctrl-rotate').addEventListener('pointerdown', () => game?.rotate());
-document.getElementById('ctrl-down').addEventListener('pointerdown', () => {
-    game?.drop();
-    dropCounter = 0;
+// Mobile Controls with Auto-Repeat
+let moveInterval = null;
+
+function startMove(action) {
+    if (!game || game.gameOver) return;
+    stopMove(); // Clear any existing interval
+    
+    action(); // Execute immediately
+    
+    // Initial delay before repeating (DAS)
+    moveInterval = setTimeout(() => {
+        moveInterval = setInterval(() => {
+            action();
+        }, 80); // Repeat rate (ARR)
+    }, 200);
+}
+
+function stopMove() {
+    clearTimeout(moveInterval);
+    clearInterval(moveInterval);
+    moveInterval = null;
+}
+
+const controls = [
+    { id: 'ctrl-left', action: () => game?.move(-1) },
+    { id: 'ctrl-right', action: () => game?.move(1) },
+    { id: 'ctrl-down', action: () => {
+        game?.drop();
+        dropCounter = 0;
+    }}
+];
+
+controls.forEach(ctrl => {
+    const el = document.getElementById(ctrl.id);
+    el.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        startMove(ctrl.action);
+    });
+    el.addEventListener('pointerup', stopMove);
+    el.addEventListener('pointerleave', stopMove);
+    el.addEventListener('pointercancel', stopMove);
 });
-document.getElementById('ctrl-drop').addEventListener('pointerdown', () => game?.hardDrop());
+
+// Single actions (Rotate, Hard Drop)
+document.getElementById('ctrl-rotate').addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    game?.rotate();
+});
+document.getElementById('ctrl-drop').addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    game?.hardDrop();
+});
 
 // Prevent scrolling on touch
 window.addEventListener('touchstart', e => {
