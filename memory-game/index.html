@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Premium Memory - 카드 맞추기</title>
+    <meta name="description" content="부모님을 위한 광고 없는 카드 맞추기 게임">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f0c29">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="header">
+        <h1>MEMORY</h1>
+    </div>
+
+    <div class="stats">
+        <div class="stat-box">
+            <div class="stat-label">시간</div>
+            <div id="timer" class="stat-value">00:00</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">시도 횟수</div>
+            <div id="moves" class="stat-value">0</div>
+        </div>
+    </div>
+
+    <div id="game-grid" class="game-grid grid-4x4">
+        <!-- Cards will be injected here by JS -->
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-secondary" onclick="showMenu()">메뉴</button>
+        <button class="btn" onclick="resetGame()">다시 시작</button>
+    </div>
+
+    <!-- Menus -->
+    <div id="menu-overlay" class="overlay active">
+        <h2>난이도 선택</h2>
+        <div class="difficulty-menu">
+            <button class="btn" onclick="initGame(4, 4)">초급 (4 x 4)</button>
+            <button class="btn" onclick="initGame(6, 6)">중급 (6 x 6)</button>
+        </div>
+    </div>
+
+    <div id="win-overlay" class="overlay">
+        <h2>성공! 🎉</h2>
+        <div class="stat-box" style="margin-bottom: 20px;">
+            <div id="final-stats" class="stat-value">00:00 / 0 moves</div>
+        </div>
+        <button class="btn" onclick="showMenu()">다시 하기</button>
+    </div>
+
+    <script src="game.js"></script>
+    <script>
+        // PWA Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW registered'))
+                    .catch(err => console.log('SW failed', err));
+            });
+        }
+    </script>
+</body>
+</html>
